@@ -38,6 +38,39 @@ async function registerUser(userData) {
     };
 }
 
+async function loginUser(userData){
+    const {email,password}=userData
+
+    const user=await User.findOne({
+        email
+    }).select("+password")
+
+    if(!user){
+        const error = new Error("Invalid email or password");
+        error.statusCode = 401;
+        throw error;
+    }
+
+    const isPasswordValid =await user.comparePassword(password)
+
+    if(!isPasswordValid ){
+        const error = new Error("Invalid email or password");
+        error.statusCode = 401;
+        throw error;
+    }
+
+    const accessToken=generateAccessToken(user)
+
+    const responseUser = user.toObject();
+    delete responseUser.password;
+
+    return {
+        accessToken,
+        user:responseUser
+    }
+}
+
 module.exports = {
     registerUser,
+    loginUser,
 };
