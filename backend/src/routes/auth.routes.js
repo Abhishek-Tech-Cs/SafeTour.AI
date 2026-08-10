@@ -9,6 +9,6 @@ const router=express.Router();
 router.post('/register', registerValidation, validateRequest, register);
 router.post('/login', loginValidation, validateRequest, login)
 router.get('/me', protectRoute, getMe)
-router.get('/logout', protectRoute, logout)
+router.get('/logout', logout)
 
 module.exports=router
