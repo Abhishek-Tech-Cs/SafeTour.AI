@@ -1,16 +1,22 @@
-//axios setup
+import axios from 'axios';
 
-import axios from 'axios'
-
-console.log(import.meta.env.VITE_API_URL)
-const api= axios.create({
+const api = axios.create({
     baseURL:import.meta.env.VITE_API_URL,
-
-    headers:{
-        "Content-Type":"application/json"
-    },
-
     withCredentials:true
 })
 
-export default api;
+api.interceptors.response.use(
+    (response) => {
+        return response
+    },
+    (error) => {
+        if(error.response?.status === 401 && error.config?.url === "/auth/me"){
+            window.dispatchEvent(
+                new Event("unauthorized")
+            )
+        }
+        return Promise.reject(error)
+    }
+)
+
+export default api

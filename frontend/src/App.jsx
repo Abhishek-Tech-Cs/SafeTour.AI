@@ -1,24 +1,10 @@
 import React from 'react'
-import { useEffect } from 'react'
-import api from './services/api'
+import {RouterProvider} from 'react-router-dom'
+import router from './app/routes'
 
 const App = () => {
-
-  useEffect(()=>{
-    async function checkBackend(){
-      try{
-        const response=await api.get("/health")
-        console.log(response.data)
-      }catch{
-        console.error(error)
-      }
-    }
-
-    checkBackend();
-  },[])
-
   return (
-    <div>SafeTour.ai</div>
+    <RouterProvider router={router}/>
   )
 }
 
