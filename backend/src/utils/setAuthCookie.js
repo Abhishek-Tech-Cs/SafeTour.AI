@@ -5,7 +5,7 @@ function setAuthCookie(res, accessToken) {
         httpOnly: true,
         secure: env.node_env === "production",
         sameSite: "lax",
-        maxAge: 24 * 60 * 60 * 1000, // 1 day
+        maxAge: 15 * 60 * 1000, // 15 min
     });
 }
 

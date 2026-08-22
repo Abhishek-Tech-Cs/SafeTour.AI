@@ -54,7 +54,41 @@ const loginValidation = [
         .bail()
 ];
 
+const resetPasswordValidation = [
+    body("token")
+        .notEmpty()
+        .withMessage("Reset token is required"),
+
+    body("newPassword")
+        .notEmpty()
+        .withMessage("New password is required")
+        .bail()
+        .isStrongPassword({
+            minLength: 8,
+            minLowercase: 1,
+            minNumbers: 1,
+            minSymbols: 1,
+            minUppercase: 1
+        })
+        .withMessage(
+            "Password must contain at least 8 characters, one uppercase letter, one lowercase letter, one number, and one special character"
+        )
+];
+
+const forgotPasswordValidation = [
+    body("email")
+        .trim()
+        .notEmpty()
+        .withMessage("Email is required")
+        .bail()
+        .isEmail()
+        .withMessage("Please enter a valid email address")
+        .normalizeEmail()
+];
+
 module.exports={
     registerValidation,
-    loginValidation
+    loginValidation,
+    resetPasswordValidation,
+    forgotPasswordValidation
 }

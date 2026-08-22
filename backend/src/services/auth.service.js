@@ -1,7 +1,7 @@
 const User = require("../models/user.model");
-const jwt = require("jsonwebtoken");
-const env = require("../config/env");
-const generateAccessToken=require('../utils/generateAccessToken')
+const generateAccessToken = require('../utils/generateAccessToken')
+const {createRefreshToken} = require('../services/refreshToken.service')
+const {createEmailVerificationToken, sendVerificationEmail} = require('./emailVerification.service')
 
 async function registerUser(userData) {
     const { name, email, mobileNumber, password } = userData;
@@ -29,12 +29,20 @@ async function registerUser(userData) {
         mobileNumber,
         password,
     });
+    try{
+        const emailVerificationToken = await createEmailVerificationToken(user.id);
+        await sendVerificationEmail(user, emailVerificationToken);
+    }catch (error) {
+        console.error("Failed to send verification email:", error);
+    }
 
     const accessToken = generateAccessToken(user);
+    const refreshToken = await createRefreshToken(user.id)
 
     return {
         user,
         accessToken,
+        refreshToken
     };
 }
 
@@ -59,13 +67,15 @@ async function loginUser(userData){
         throw error;
     }
 
-    const accessToken=generateAccessToken(user)
+    const accessToken = generateAccessToken(user)
+    const refreshToken = await createRefreshToken(user.id)
 
     const responseUser = user.toObject();
     delete responseUser.password;
 
     return {
         accessToken,
+        refreshToken,
         user:responseUser
     }
 }
