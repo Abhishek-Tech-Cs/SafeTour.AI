@@ -5,6 +5,8 @@ const env = require('../config/env');
 const { refreshAccessToken, revokeRefreshTokenByRawToken } = require('../services/refreshToken.service');
 const { verifyEmail, resendVerificationEmail } = require('../services/emailVerification.service');
 const { forgotPassword, resetPassword } = require('../services/passwordReset.service');
+const { verifyEmailChange } = require('../services/emailChange.service');
+const { verifyMobile } = require('../services/mobileVerification.service');
 
 async function register(req, res, next) {
     try {
@@ -187,6 +189,48 @@ async function resetPasswordController(req, res, next) {
     }
 }
 
+async function verifyEmailChangeController(req, res, next) {
+    try {
+        const { token } = req.body;
+
+        if (!token) {
+            const error = new Error("Verification token is required");
+            error.statusCode = 400;
+            throw error;
+        }
+
+        await verifyEmailChange(token);
+
+        return res.status(200).json({
+            success: true,
+            message: "Email changed successfully"
+        });
+    } catch (error) {
+        return next(error);
+    }
+}
+
+async function verifyMobileController(req, res, next) {
+    try {
+        const { accessToken } = req.body;
+
+        const user = await verifyMobile(
+            req.user.id,
+            accessToken
+        );
+
+        return res.status(200).json({
+            success: true,
+            message: "Mobile number verified successfully",
+            data: {
+                mobileVerified: user.mobileVerified
+            }
+        });
+    } catch (error) {
+        return next(error);
+    }
+}
+
 module.exports = {
     register,
     login,
@@ -196,5 +240,7 @@ module.exports = {
     verifyEmailController,
     resendVerification,
     forgotPasswordController,
-    resetPasswordController
+    resetPasswordController,
+    verifyEmailChangeController,
+    verifyMobileController
 }

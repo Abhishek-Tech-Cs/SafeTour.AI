@@ -6,6 +6,7 @@ const env = require('./config/env')
 const healthRoutes = require('./routes/health.routes')
 const authRoutes = require('./routes/auth.routes')
 const userRoutes = require('./routes/user.routes')
+const emergencyContactRoutes = require('./routes/emergencyContact.routes')
 const notFoundRoute = require('./middleware/notFound.middleware')
 const errorHandler = require('./middleware/error.middleware')
 
@@ -21,7 +22,7 @@ app.use(cookieParser())
 app.use('/api/health', healthRoutes);
 app.use('/api/auth', authRoutes)
 app.use('/api/users', userRoutes)
-
+app.use('/api/users', emergencyContactRoutes)
 app.use(notFoundRoute)
 app.use(errorHandler)
 

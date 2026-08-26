@@ -40,7 +40,11 @@ const userSchema=new mongoose.Schema({
     isVerified:{
         type:Boolean,
         default:false
-    }
+    },
+    mobileVerified:{
+        type:Boolean,
+        default:false
+    },
 },{
     timestamps:true,
 
@@ -81,4 +85,4 @@ userSchema.methods.comparePassword=async function(userPassword){
 
 const User=mongoose.model("User",userSchema);
 
-module.exports=User;
+module.exports = User;
